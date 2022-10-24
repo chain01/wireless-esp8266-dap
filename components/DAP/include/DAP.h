@@ -287,7 +287,7 @@ extern uint32_t DAP_ProcessCommand       (const uint8_t *request, uint8_t *respo
 extern uint32_t DAP_ExecuteCommand       (const uint8_t *request, uint8_t *response);
 
 extern void     DAP_Setup (void);
-uint8_t swd_write_data(uint32_t address, uint32_t data)
+uint8_t swd_write_data(uint32_t address, uint32_t data);
 // Configurable delay for clock generation
 #ifndef DELAY_SLOW_CYCLES
 #define DELAY_SLOW_CYCLES       3U      // Number of cycles for one iteration
