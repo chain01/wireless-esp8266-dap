@@ -1799,3 +1799,61 @@ void DAP_Setup(void) {
 
   DAP_SETUP();  // Device specific setup
 }
+#define MAX_SWD_RETRY 100//10
+#define MAX_TIMEOUT   1000000  // Timeout for syscalls on target
+void int2array(uint8_t *res, uint32_t data, uint8_t len)
+{
+    uint8_t i = 0;
+
+    for (i = 0; i < len; i++) {
+        res[i] = (data >> 8 * i) & 0xff;
+    }
+}
+uint8_t swd_transfer_retry(uint32_t req, uint32_t *data)
+{
+    uint8_t i, ack;
+
+    for (i = 0; i < MAX_SWD_RETRY; i++) {
+        ack = SWD_Transfer(req, data);
+
+        // if ack != WAIT
+        if (ack != DAP_TRANSFER_WAIT) {
+            return ack;
+        }
+    }
+
+    return ack;
+}
+#define SWD_REG_AP        (1)
+#define SWD_REG_DP        (0)
+#define SWD_REG_R         (1<<1)
+#define SWD_REG_W         (0<<1)
+#define SWD_REG_ADR(a)    (a & 0x0c)
+// Write target memory.
+uint8_t swd_write_data(uint32_t address, uint32_t data)
+{
+    uint8_t tmp_in[4];
+    uint8_t req, ack;
+    // put addr in TAR register
+    int2array(tmp_in, address, 4);
+    req = SWD_REG_AP | SWD_REG_W | (1 << 2);
+
+    if (swd_transfer_retry(req, (uint32_t *)tmp_in) != 0x01) {
+        return 0;
+    }
+
+    // write data
+    int2array(tmp_in, data, 4);
+    req = SWD_REG_AP | SWD_REG_W | (3 << 2);
+
+    if (swd_transfer_retry(req, (uint32_t *)tmp_in) != 0x01) {
+        return 0;
+    }
+
+    // dummy read
+    req = SWD_REG_DP | SWD_REG_R | SWD_REG_ADR(DP_RDBUFF);
+    ack = swd_transfer_retry(req, NULL);
+    return (ack == 0x01) ? 1 : 0;
+}
+
+
