@@ -52,7 +52,7 @@
 #include "components/DAP/include/cmsis_compiler.h"
 #include "components/DAP/include/gpio_op.h"
 #include "components/DAP/include/spi_switch.h"
-
+#include "DAP.h"
 
 #ifdef CONFIG_IDF_TARGET_ESP8266
   #include "gpio.h"
