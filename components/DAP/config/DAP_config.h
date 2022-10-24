@@ -683,6 +683,10 @@ __STATIC_FORCEINLINE uint32_t PIN_nRESET_IN(void)
 {
   return GPIO_GET_LEVEL(PIN_nRESET);
 }
+/* following defines should be used for structure members */
+#define     __IM     volatile const      /*! Defines 'read only' structure member permissions */
+#define     __OM     volatile            /*! Defines 'write only' structure member permissions */
+#define     __IOM    volatile            /*! Defines 'read / write' structure member permissions */
 #define SCB_AIRCR_SYSRESETREQ_Pos           2U                                            /*!< SCB AIRCR: SYSRESETREQ Position */
 #define SCB_AIRCR_SYSRESETREQ_Msk          (1UL << SCB_AIRCR_SYSRESETREQ_Pos)             /*!< SCB AIRCR: SYSRESETREQ Mask */
 #define SCB_AIRCR_VECTKEY_Pos              16U
